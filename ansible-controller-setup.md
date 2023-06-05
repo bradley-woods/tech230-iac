@@ -11,7 +11,7 @@ In this guide we will set up Ansible in the following configuration as shown in 
 
 ## Provision VMs using Vagrant
 
-1. Firstly, set up 3 VMs by creating a Vagrantfile similar to how we made one to provision two-tier architecture in the previous repository (). The VMs should have the same OS (`bento/ubuntu-18.04`) and be configured with the following private IP addresses:
+1. Firstly, set up 3 VMs by creating a Vagrantfile similar to how we made one to provision two-tier architecture in the previous repository [tech230-multimachine](https://github.com/bradley-woods/tech230-multimachine). The VMs should have the same OS (`bento/ubuntu-18.04`) and be configured with the following private IP addresses:
 
    - controller - 192.168.33.12
    - web - 192.168.33.10
