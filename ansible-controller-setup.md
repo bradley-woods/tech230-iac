@@ -1,6 +1,6 @@
 # Ansible - Controller Setup <!-- omit from toc -->
 
-In this guide we will set up Ansible in the following configuration as shown in the diagram. This includes setting up one out of three VMs as the controller so the other two VMs can be used as managed nodes to server our webapp and database.
+In this guide we will set up Ansible in the following configuration as shown in the diagram. This includes setting up one out of three VMs as the controller so the other two VMs can be used as managed nodes to serve our webapp and database.
 
 - [Provision VMs using Vagrant](#provision-vms-using-vagrant)
 - [Check each VM](#check-each-vm)
