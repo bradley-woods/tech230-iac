@@ -2,7 +2,7 @@
 
 ## Contents of Repository
 
-   1. [Ansible - Controller Setup](https://github.com/bradley-woods/tech230-aws/blob/main/aws-ec2-setup.md)
+   1. [Ansible - Controller Setup](https://github.com/bradley-woods/tech230-iac/blob/main/ansible-setup.md)
 
 ## What is IaC?
 
