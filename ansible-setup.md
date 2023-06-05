@@ -1,6 +1,11 @@
-# Ansible - Setup
+# Ansible - Setup <!-- omit from toc -->
 
 In this guide we will set up Ansible in the following configuration as shown in the diagram. This includes setting up one out of three VMs as the controller so the other two VMs can be used as managed nodes to server our webapp and database.
+
+- [Provision VMs using Vagrant](#provision-vms-using-vagrant)
+- [Check each VM](#check-each-vm)
+- [Set up the Ansible Controller](#set-up-the-ansible-controller)
+- [Testing Controller and VMs Connection](#testing-controller-and-vms-connection)
 
 ![Ansible diagram](images/ansible-diagram.png)
 
@@ -86,16 +91,18 @@ The next step is to check each VM is running, has a stable internet connection a
 
     > **Note:** we can group the IP address using labels e.g. [web] so if we have multiple web servers and want to perform tasks on them like updating their version of Python, we can simply call the group instead of each individual IP address.
 
-7. Save and exit the `hosts` file and test the connection to the VMs using the `ping` module:
+## Testing Controller and VMs Connection 
+
+1. Once you have saved and exited the `hosts` file, we can test the connection to the VMs using the `ping` module:
 
     ```bash
     sudo ansible all -m ping
     ```
 
-8. The following should be returned in the log which indicates a successful connection:
+2. The following should be returned in the log which indicates a successful connection:
 
     ![Ansible ping](images/ansible-ping.png)
 
-9. If the connection was not a success, it may be because the VMs are not in the `known_hosts` file in the .ssh folder. Therefore, we can temporarily connect to them by turning off SSH checking in the `ansible.cfg` file, and then once connected we can turn it back on to ensure security.
+3. If the connection was not a success, it may be because the VMs are not in the `known_hosts` file in the .ssh folder. Therefore, we can temporarily connect to them by turning off SSH checking in the `ansible.cfg` file, and then once connected we can turn it back on to ensure security.
 
     ![Ansible host key checking](images/ansible-host-key-checking.png)
