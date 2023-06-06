@@ -17,11 +17,14 @@
     controller.vm.hostname = 'controller'
     # synced_folder to run provision.sh to set up ansible controller
     
+    # synced_folder to copy app folder to ansible controller
+    controller.vm.synced_folder "app", "/home/vagrant/app"
+
     controller.vm.network :private_network, ip: "192.168.33.12"
     
     #config.hostsupdater.aliases = ["development.controller"] 
-    
    end 
+   
  # creating first VM called web  
    config.vm.define "web" do |web|
      

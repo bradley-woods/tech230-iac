@@ -85,7 +85,15 @@ The next step is to check each VM is running, has a stable internet connection a
     sudo nano hosts
     ```
 
-6. Next, we can add the IP address of each VM to the hosts list, setting the connection as SSH and the username and password as vagrant.
+6. Next, we can add the IP address of each VM to the hosts list, setting the connection as SSH and the username and password as vagrant:
+
+    ```bash
+    [web]
+    192.168.33.10 ansible_connection=ssh ansible_ssh_user=vagrant ansible_ssh_pass=vagrant
+    
+    [db]
+    192.168.33.11 ansible_connection=ssh ansible_ssh_user=vagrant ansible_ssh_pass=vagrant
+    ```
 
     ![Ansible hosts](images/ansible-hosts.png)
 

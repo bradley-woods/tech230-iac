@@ -4,6 +4,8 @@
 
    1. [Ansible - Controller Setup](https://github.com/bradley-woods/tech230-iac/blob/main/ansible-controller-setup.md)
 
+   2. [Ansible - Ad-hoc Commands and Playbooks](https://github.com/bradley-woods/tech230-iac/blob/main/ansible-adhoc-and-playbook.md)
+
 ## What is IaC?
 
 Infrastructure as Code (IaC) is the process of managing and deploying IT infrastructure such as servers, networking devices and other computing resources using code instead of using manual operations.
