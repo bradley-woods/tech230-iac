@@ -13,7 +13,7 @@ Once we have configured the Ansible controller, outlined [here](https://github.c
 Ad-hoc commands are useful for tasks that are NOT repetitive, they can be used on the controller node to run specific one-off commands on the agent node in the following format:
 
 ```bash
-sudo ansible <agent-name> -m <command> -a "<module options>"
+$ sudo ansible <agent-name> -m <command> -a "<module options>"
 ```
 
 For example:
@@ -21,13 +21,13 @@ For example:
 - To find out the Linux OS information of an agent/group of agents:
 
     ```bash
-    sudo ansible <agent-name> -a "uname -a"
+    $ sudo ansible <agent-name> -a "uname -a"
     ```
 
 - To find out the date on the agent node (if its in another timezone):
 
     ```bash
-    sudo ansible <agent-name> -a "date"
+    $ sudo ansible <agent-name> -a "date"
     ```
 
 ## Ansible Playbook - Web Server Configuration
@@ -138,6 +138,8 @@ In the previous section we automated the configuration of the web server. In thi
     - name: Restarting MongoDB
         systemd: name=mongodb enabled=yes state=restarted
     ```
+
+    ![MongoDB playbook](images/ansible-playbook-mongo.png)
 
 3. We can now run the database Ansible playbook using the following command, using the '`-v`' verbose flag for detail in the logs:
 
