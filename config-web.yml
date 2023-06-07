@@ -1,0 +1,59 @@
+# Playbook to install Nginx and run the app in web-server/s
+
+# add 3 dashes --- to start YAML file
+---
+# add the name of the host
+- hosts: web
+
+# gather facts about the steps (show logs)
+  gather_facts: yes
+
+# add admin access to this file (sudo)
+  become: true
+
+# TASKS
+# -----
+  tasks:
+  # copy app folder from controller to web-server/s
+  - name: Copy app folder from controller to web
+    synchronize:
+      src: /home/vagrant/app
+      dest: /home/vagrant
+
+  # install and enable Nginx
+  - name: Installing Nginx
+    apt: pkg=nginx state=present
+
+  # configure Nginx as Reverse Proxy
+  - name: Configuring Nginx Reverse Proxy
+    command: sudo sed -i "s@try_files $uri $uri/ =404;@proxy_pass http://localhost:3000/;@" /etc/nginx/sites-available/default
+
+  # restarting Nginx to refresh config file
+  - name: Restarting Nginx
+    systemd: name=nginx enabled=yes state=restarted
+
+  # add environment variable DB_HOST to .bashrc to ensure persistance
+  # - name: Env var to connect database
+  #   lineinfile:
+  #     path: /home/vagrant/.bashrc
+  #     line: "export DB_HOST=mongodb://192.168.33.11:27017/posts"
+  #     state: present
+
+  # export environment variable DB_HOST to connect to database
+  - name: export env var
+    command: export DB_HOST=mongodb://192.168.33.11:27017/posts
+
+  # install NodeJS
+  - name: Installing NodeJS
+    apt: pkg=nodejs state=present
+
+  # install NPM
+  - name: Installing NPM
+    apt: pkg=npm state=present
+
+  # start the application
+  - name: Start the application
+    command:
+      chdir: /home/vagrant/app
+      cmd: npm install
+      cmd: npm restart

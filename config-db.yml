@@ -1,0 +1,28 @@
+# Playbook to install MongoDB and run the database in db-server/s
+
+# add 3 dashes --- to start YAML file
+---
+# add the name of the host
+- hosts: db
+
+# gather facts about the steps (show logs)
+  gather_facts: yes
+
+# add admin access to this file (sudo)
+  become: true
+
+# TASKS
+# -----
+  tasks:
+  # install and enable MongoDB
+  - name: Installing MongoDB
+    apt: pkg=mongodb state=present
+
+  # configure MongoDB Bind IP to 0.0.0.0
+  - name: Configuring MongoDB Bind IP
+    command: sudo sed -i "s/127.0.0.1/0.0.0.0/" /etc/mongodb.conf
+
+  # restarting MongoDB to refresh config file
+  - name: Restarting MongoDB
+    systemd: name=mongodb enabled=yes state=restarted
+    
