@@ -81,25 +81,25 @@ resource "aws_security_group" "public_subnet_sg" {
 		from_port   = 80
 		to_port     = 80
 		protocol    = "tcp"
-		cidr_blocks = var.open_cidr
+		cidr_blocks = var.open_cidr_sg
 	}
 	ingress {
 		from_port   = 22
 		to_port     = 22
 		protocol    = "tcp"
-		cidr_blocks = var.open_cidr
+		cidr_blocks = var.open_cidr_sg
 	}
 	ingress {
 		from_port   = 3000
 		to_port     = 3000
 		protocol    = "tcp"
-		cidr_blocks = var.vpc_cidr
+		cidr_blocks = var.vpc_cidr_sg
 	}
 	egress {
 		from_port   = 0
 		to_port     = 0
 		protocol    = "-1"
-		cidr_blocks = var.open_cidr
+		cidr_blocks = var.open_cidr_sg
 	}
 }
 
@@ -113,13 +113,13 @@ resource "aws_security_group" "private_subnet_sg" {
 		from_port   = 27017
 		to_port     = 27017
 		protocol    = "tcp"
-		cidr_blocks = var.vpc_cidr
+		cidr_blocks = var.vpc_cidr_sg
 	}
 	egress {
 		from_port   = 0
 		to_port     = 0
 		protocol    = "-1"
-		cidr_blocks = var.open_cidr
+		cidr_blocks = var.open_cidr_sg
 	}
 }
 
