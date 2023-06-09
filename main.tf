@@ -1,32 +1,155 @@
-# To create a service on AWS cloud
-# --------------------------------
-# launch an EC2 instance in Ireland (eu-west-1)
-# Terraform to download required dependencies
-# terraform init
+# Main
+# ----
+# Using Terraform to launch a VPC and two-tier architecture in Ireland (eu-west-1)
 
+# Configure AWS as cloud provider
 provider "aws" {
-# which region of AWS
-	region = region
-	
+	region = var.region
 }
-# Git bash must have admin access
-# launch an EC2 instance
 
-# which resource
-resource "aws_instance" "app_instance" {
+# Deploy Virtual Private Cloud (VPC)
+resource "aws_vpc" "vpc" {
+	cidr_block       = var.vpc_cidr
+	instance_tenancy = "default"
 
-# which AMI - ubuntu 18.04
-	ami = ami
-
-# type of instance - t2.micro
-	instance_type = type
-
-# do you need public ip - yes
-	associate_public_ip_address = true
-
-# what would you like to call it
 	tags = {
-		Name = name
-		
+		Name = var.vpc_name
+	}
+}
+
+# Deploy Internet Gateway and attach to VPC
+resource "aws_internet_gateway" "ig" {
+	vpc_id = aws_vpc.vpc.id
+
+	tags = {
+		Name = var.ig_name
+	}
+}
+
+# Deploy Public Subnet
+resource "aws_subnet" "public_subnet" {
+	vpc_id                  = aws_vpc.vpc.id
+	cidr_block              = var.public_subnet_cidr
+	availability_zone       = var.az
+	map_public_ip_on_launch = true
+
+	tags = {
+		Name = var.public_subnet_name
+	}
+}
+
+# Deploy Private Subnet
+resource "aws_subnet" "private_subnet" {
+	vpc_id                  = aws_vpc.vpc.id
+	cidr_block              = var.private_subnet_cidr
+	availability_zone       = var.az
+	map_public_ip_on_launch = false
+
+	tags = {
+		Name = var.private_subnet_name
+	}
+}
+
+# Deploy Route Table for Public Subnet
+resource "aws_route_table" "public_rt" {
+	vpc_id = aws_vpc.vpc.id
+
+	route {
+		cidr_block = var.open_cidr
+		gateway_id = aws_internet_gateway.ig.id
+	}
+	tags = {
+		Name = var.route_table_name
+	}
+}
+
+# Private Subnet will be routed private by default
+
+# Associate Public Subnet With Route Table
+resource "aws_route_table_association" "public_route" {
+	subnet_id      = aws_subnet.public_subnet.id
+	route_table_id = aws_route_table.public_rt.id
+}
+
+# Deploy Public Subnet Security Group
+resource "aws_security_group" "public_subnet_sg" {
+	name        = "public_subnet_sg"
+	description = "Allow Port 80 (HTTP), 22 (SSH) and 3000 (NodeJS)"
+	vpc_id      = aws_vpc.vpc.id
+
+	ingress {
+		from_port   = 80
+		to_port     = 80
+		protocol    = "tcp"
+		cidr_blocks = var.open_cidr
+	}
+	ingress {
+		from_port   = 22
+		to_port     = 22
+		protocol    = "tcp"
+		cidr_blocks = var.open_cidr
+	}
+	ingress {
+		from_port   = 3000
+		to_port     = 3000
+		protocol    = "tcp"
+		cidr_blocks = var.vpc_cidr
+	}
+	egress {
+		from_port   = 0
+		to_port     = 0
+		protocol    = "-1"
+		cidr_blocks = var.open_cidr
+	}
+}
+
+# Deploy Private Subnet Security Group
+resource "aws_security_group" "private_subnet_sg" {
+	name        = "private_subnet_sg"
+	description = "Allow Port 27017 (MongoDB)"
+	vpc_id      = aws_vpc.vpc.id
+
+	ingress {
+		from_port   = 27017
+		to_port     = 27017
+		protocol    = "tcp"
+		cidr_blocks = var.vpc_cidr
+	}
+	egress {
+		from_port   = 0
+		to_port     = 0
+		protocol    = "-1"
+		cidr_blocks = var.open_cidr
+	}
+}
+
+# Deploy EC2 Instance for Web Application in Public Subnet
+resource "aws_instance" "app_instance" {
+	ami                         = var.ami
+	instance_type               = "t2.micro"
+	key_name                    = "tech230"
+	availability_zone           = var.az
+	vpc_security_group_ids      = [aws_security_group.public_subnet_sg.id]
+	subnet_id                   = aws_subnet.public_subnet.id
+	associate_public_ip_address = true
+	user_data                   = "${file("provision-app.sh")}"
+	tags = {
+		Name = var.app_instance_name
+	}
+}
+
+# Deploy EC2 Instance for Database in Private Subnet
+resource "aws_instance" "db_instance" {
+	ami                         = var.ami
+	instance_type               = "t2.micro"
+	key_name                    = "tech230"
+	availability_zone           = var.az
+	vpc_security_group_ids      = [aws_security_group.private_subnet_sg.id]
+	subnet_id                   = aws_subnet.private_subnet.id
+	associate_public_ip_address = false
+	private_ip                  = var.db_private_ip
+	user_data                   = "${file("provision-db.sh")}"
+	tags = {
+		Name = var.db_instance_name
 	}
 }
