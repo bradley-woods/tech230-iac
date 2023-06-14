@@ -1,6 +1,16 @@
 # Main
 # ----
-# Using Terraform to launch a VPC and two-tier architecture in Ireland (eu-west-1)
+# Using Terraform to launch following resources as two-tier architecture in Ireland (eu-west-1)
+# 1. Virtual Private Cloud (VPC)
+# 2. Internet Gateway (IGW)
+# 3. Public Subnet
+# 4. Private Subnet
+# 5. Public Subnet Route Table
+# 6. Public Subnet Route Table Association
+# 7. Public Subnet Security Group
+# 8. Private Subnet Security Group
+# 9. App EC2 Instance
+# 10. Database EC2 Instance
 
 # Configure AWS as cloud provider
 provider "aws" {
@@ -125,7 +135,7 @@ resource "aws_security_group" "private_subnet_sg" {
 
 # Deploy EC2 Instance for Web Application in Public Subnet
 resource "aws_instance" "app_instance" {
-	ami                         = var.ami
+	ami                         = var.app_ami
 	instance_type               = "t2.micro"
 	key_name                    = "tech230"
 	availability_zone           = var.az
@@ -140,7 +150,7 @@ resource "aws_instance" "app_instance" {
 
 # Deploy EC2 Instance for Database in Private Subnet
 resource "aws_instance" "db_instance" {
-	ami                         = var.ami
+	ami                         = var.db_ami
 	instance_type               = "t2.micro"
 	key_name                    = "tech230"
 	availability_zone           = var.az
@@ -148,7 +158,7 @@ resource "aws_instance" "db_instance" {
 	subnet_id                   = aws_subnet.private_subnet.id
 	associate_public_ip_address = false
 	private_ip                  = var.db_private_ip
-	user_data                   = "${file("provision-db.sh")}"
+	#user_data                   = "${file("provision-db.sh")}"
 	tags = {
 		Name = var.db_instance_name
 	}
